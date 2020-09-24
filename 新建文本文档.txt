@@ -1,0 +1,661 @@
+查一下分块矩阵的定义，写两张纸
+ blocking matric
+ partitioned matrix 
+
+
+Linux bilibili
+
+
+
+
+day 2
+目录名		目录的作用
+/bin/		存放系统命令的目录，普通用户和超级用户都可以执行。不过放在/bin下的命令再单用户模式下也可以执行
+/sbin/		保存和系统环境设置相关的命令，只用超级用户（super）可以使用这些命令进行系统环境设置，但是有些命令可以允许普通用户查看
+/usr/bin/		存放系统命令的目录，普通用户和超级用户都可以执行。这些命令和系统启动无关，在单用户模式下不能执行
+/usr/sbin/		存放根文件系统不必要的系统管理命令，例如多数服务程序。只有超级用户可以使用。
+在Linux中，在所有'sbin'目录中保存的命令只有超级用户可以使用；'bin'目录中保存的命令所有用户都可以使用
+/boot/		系统启动目录，保存系统启动相关的文件，如内核文件和启动引导程序（grub）文件等。（最好备份一下这个目录）
+/dev/		设备文件保存位置。我们已经说过Linux中所有内容以文件形式保存，包括硬件。那么这个目录就是用来保存所有硬件设备文件的
+/etc/		配置文件保存位置。系统内所有采用默认安装方式（rpm安装）的服务的配置文件全部都保存在这个目录当中，如用户账号和密码，
+		服务的启动脚本，常用的服务的配置文件等。（最好备份一下这个目录）
+/home/		普通用户的家目录。建立时每个用户时，每个用户要有一个默认登陆位置，这个位置就是这个用户的家目录，
+		所有普通用户的家目录就是在/home下建立一个和用户名相同的目录。如用户user1的家目录就是/home/user1
+/lib/		系统调用的函数库保存位置
+/last+found/	当系统意外崩溃或机器意外关机，而产生一些文件碎片放在这里。当系统启动的过程中fsck工具会检查这里，并修复已经损坏的文件系统。
+		这个目录只在每个分区中出现，例如/last+found就是根分区的备份回复目录，/boot/lost+found就是/boot分区的备份回复目录
+/media/		挂载目录。系统建议是用来挂载媒体设备的，例如软盘和光盘
+/mnt/		挂载目录，早期Linux中只有这一个挂载目录，并没有细分。现在这个目录系统建议挂载额外设备，如U盘，移动硬盘和其他操作系统的分区
+/misc/		挂载目录。系统建议用来挂载NFS服务的共享目录。只要是一个已经建立的空目录就可以作为挂载点。
+		那么系统虽然准备三个默认挂载目录/media、/mnt、/misc，但是到底在哪个目录中挂在什么设备都可以由管理员自己决定。
+/opt/		第三方安装的软件保存位置。这个目录就是放置和安装其他软件的位置，手工安装的源码包软件都可以安装到这个目录当中。
+		不过习惯了的人，也可以安装到/usr/local/目录中。即/usr/local/目录也可以用来安装软件
+/proc/		虚拟文件系统，该目录中的数据并不保存到硬盘当中，而是保存到内存当中。主要保存系统的内核，进程，外部设备状态和网络状态灯。
+		如/proc/cpuinfo是保存文件系统列表的，/proc/net/是保存网络协议信息的
+/sys/		虚拟文件系统，和/proc目录相似都是保存在内存当中的，主要是保存于内核相关信息的
+/root/		超级用户的家目录。普通用户家目录在"/home"下，超级用于家目录直接在"/"下
+/srv/		服务器数据目录。一些系统服务启动之后，可以在这个目录中保存所需要的数据
+/tmp/		临时目录。系统存放临时文件的目录，该目录下所有用户都可以访问和写入。建议此目录中不能保存重要的数据，最好每次开机都把该目录清空
+/usr/		"Unix Software Resouce"的缩写。系统软件资源目录，不是存放用户数据，而是存放系统软件资源的目录。
+		系统中安装的软件大多数保存在这里，所以除了/usr/bin/和/usr/sbin/这两个目录
+/var/		动态数据保存位置。主要保存缓存、日志以及软件运行所产生的文件
+
+命令格式：
+命令格式： 命令  [-选项]  [参数]
+	例：ls  -la  /etc
+说明：	1）个别命令使用不遵守此格式
+	2）当有多个选项时，可以写在一起  -la=-l -a=-a -l
+	3）简化选项与完整选项   -a等于--all
+
+目录处理命令：ls
+命令名称：ls   英文原意：list
+命令所在路径：/bin/ls
+执行权限：所有用户
+功能描述：显示目录文件
+语法：ls  选项[-aldi]  [文件或目录]
+ls 可用选项
+-a=--all；-l=long（详细信息显示）；-d（查看当前目录属性）；-i （查看文件i节点，约等于文件id）；
+-u=user；-g=group；-o=other；-h=human（人性化，比如显示文件容量的单位）；
+-rw-r--r--
+	-文件类型（- 二进制文件，d 目录， l 软链接文件）
+	rw-  r--  r--      即：所有者有读和写的权限，所属组和其他人只能读
+	u      g    o    	u所有者   g所属组  o其他人
+	r读=read   w写=write  x执行=execute
+-开头文件（表示这是文件）
+d开头文件（direct目录）
+l开头文件（link软链接）
+注：.xxx前面带dot .的文件都是隐藏文件
+
+
+目录处理命令：mkdir
+命令名称：mkdir   英文原意：make directionary
+命令所在路径：/bin/mkdir
+执行权限：所有用户
+功能描述：创建新目录
+语法：mkdir  选项[-p]  [目录名]
+-p：递归创建
+范例$mkdir -p /tmp/Japan/boduo    $mkdir  -p /tmp/Japan/cangjing /tmp/Japan/longze
+注：不要把目录弄乱
+
+
+目录处理命令：cd
+命令名称：cd   英文原意：change directory
+命令所在路径：shell内置命令
+执行权限：所有用户
+功能描述：切换目录
+语法：cd  [目录]
+$cd  /tmp/Japan/boduo 切换到指定目录
+$cd ..回到上一级目录
+
+目录处理命令：pwd
+命令名称：pwd   英文原意：print working directory
+命令所在路径：/bin/pwd
+执行权限：所有用户
+功能描述：查看当前目录
+语法：$pwd
+
+目录处理命令：rmdir
+命令名称：rmdir   英文原意：remove empty directories
+命令所在路径：/bin/rmdir
+执行权限：所有用户
+功能描述：删除空目录
+语法：$rmdir [目录名]
+$ rmdir  /tmp/Japan/boduo
+
+目录处理命令：cp
+命令名称：cp   英文原意：copy
+命令所在路径：/bin/cp
+执行权限：所有用户
+功能描述：复制文件或目录
+语法：$cp -rp [源文件或目录名] [目标目录]
+	-r 复制目录
+	-p保留文件属性
+$ cp  /etc/grub.conf /tmp
+$ cp -r /tmp/Japan/boduo  /tmp
+$ cp  /tmp/Japan.cangjing /tmp/Japan.longze  /tmp
+$ cp -p  /root/install.log  /tmp
+$ cp -r /tmp/Japan/longze  /root/shenchao.18+(拷贝后改名）
+
+目录处理命令：mv
+命令名称：mv   英文原意：move
+命令所在路径：/bin/mv
+执行权限：所有用户
+功能描述：剪切文件、改名
+语法：$mv [源文件或目录名] [目标目录]
+$mv /tmp/Japan/cangjing  /root
+$mv /tmp/Japan/longze  /root/nvshen（剪切并命名）
+$mv cangjing canglaoshi(改名）
+
+
+目录处理命令：rm
+命令名称：rm   英文原意：remove
+命令所在路径：/bin/rm
+执行权限：所有用户
+功能描述：删除文件
+语法：$rm -rf [文件或目录名] 
+	-r 删除目录
+	-f 强制执行 （false）
+$ rm grub.config
+$ rm -f  grub.config
+$ rm -r /tmp/Japan
+$ rm -rf /tmp/Japan
+$ rm -rf  *   ---->删除当前目录下所有文件
+ctrl+c 终止指令
+ctrl+l 清屏=clear指令
+
+注：Linux系统中没有垃圾箱，删除文件后很难恢复
+
+文件处理命令：touch
+命令名称：touch  
+命令所在路径：/bin/touch
+执行权限：所有用户
+功能描述：创建空文件
+语法：$touch [文件名] 
+$ touch JapanLovestory.list
+$ touch /root/JapanLovestory.list
+$ touch “program files” （创建文件时尽量不要带有空格, 也尽量不要使用特殊符号）
+
+文件处理命令：cat
+命令名称：cat  英文原意：
+命令所在路径：/bin/cat
+执行权限：所有用户
+功能描述：显示文件内容
+语法：$cat [文件名] 
+	-n 显示行号（number）
+$cat  /etc/issue
+$cat  -n  /etc/services
+
+文件处理命令：tac
+命令名称：tac  英文原意：
+命令所在路径：/usr/bin/tac
+执行权限：所有用户
+功能描述：显示文件内容（反向显示）
+语法：$tac [文件名] 
+$ tac /etc/issue     注：不支持-n  即，不限制行号
+
+文件处理命令：more
+命令名称：more  英文原意：
+命令所在路径：/bin/more
+执行权限：所有用户
+功能描述：分页显示文件内容
+语法：$more [文件名] 
+	(空格或f) 翻页
+	(Enter）换行
+	q或Q    退出
+$ more /etc/services    (这中内容和文件超级多的文件夹，就用more来看）
+
+文件处理命令：less
+命令名称：less  
+命令所在路径：/usr/bin/less
+执行权限：所有用户
+功能描述：分页显示文件内容（可向上翻页）
+	向上箭头  向上浏览
+	pageup   向上翻页
+	n             next
+	可以搜索 ：在浏览状态直接打'/'    /搜索关键词 比如  /php
+$ less /etc/services
+
+文件处理命令：head
+命令名称：head 
+命令所在路径：/usr/bin/head
+执行权限：所有用户
+功能描述：显示文件前面几行
+	-n指定行数
+$ head  /etc/services    默认查看文件的前十行
+$ head  -n 20 /etc/services   （通常由于查看脚本时只需看前几行的注释，是谁写的，干啥用的就行）
+
+文件处理命令：tail
+命令名称：tail 
+命令所在路径：/usr/bin/tail
+执行权限：所有用户
+功能描述：显示文件最后几行
+	-n指定行数
+	-f动态限制文件末尾内容跟
+$ tail  -n 18 /etc/services
+$ tail  -f  /var/log/messages
+
+文件处理命令：ln
+命令名称：ln       英文名称：link
+命令所在路径：/bin/ln
+执行权限：所有用户
+功能描述：生成链接文件
+语法	ln -s[源文件][目标文件]
+	-s 创建软连接 
+$ ln  -s  /etc/issue  /tmp/issue.soft	创建文件/etc/isue 的软链接/tmp/issue.soft
+软链接中 lrwxrwxrwx 所有人具有全部操作权限，只有软链接的开头是l=link  这个软链接类似于快捷方式，
+软链接：
+1、l开头，可针对目录
+2、文件小-->只是符号链接
+3、箭头指向源文件   /tmp/issue.soft->/etc/issue
+$ ln   /etc/isue  /tmp/issue.hard	创建文件/etc/isue 的硬链接/tmp/issue.soft
+硬链接：（其实用的不多，可以当作实时备份，比如我写了一半脚本，让别人继续写，发过去个硬链接）
+1、硬链接=拷贝cp -p  +同步更新
+2、通过i节点识别    类似于每个人或者操作的id
+3、不能跨分区
+4、不能针对目录使用，只能针对文件，不能对目录生成硬链接
+
+
+第三课：
+权限管理命令：chmod
+命令名称：chmod	英文名称：change the permission mode  of a file
+命令所在路径：/bin/chmod
+执行权限：文件所有者或者root（管理员）
+功能描述：改变文件或目录权限
+语法	chmod  [{ugoa}{+-=}{rwx}][文件或目录]   可同时设置多人权限，只需用','隔开
+	[mode=421][文件或目录]
+	-R 递归修改
+$ chmod g+w,o-r  JanpanLoveStory.list   赋予文件testfile所属组‘写‘权限
+$ chmod 640   JanpanLoveStory.list 	r------->4;w----->2;x----->1          rwxrw-r--    764     rwxr-x-r-x    755
+$ chmod -R 777 /temp/a    赋予a目录与a目录下所有文件，全用户所有权限 即rwxrwxrwx
+
+注：	
+字符  权限     对文件执行             对目录执行
+ r  读权限    可以查看文件内容   可以列出目录中的内容
+w  写权限    可以修改文件内容   可以在目录中创建、删除文件
+x   执行权限 可以执行文件         可以进入目录
+权限有继承关系！如果想要删除文件，你就必须能够对这个文件的所在目录有w权限
+
+权限管理命令：chown
+命令名称：chown	英文名称：change file owner
+命令所在路径：/bin/chown
+执行权限：只有root（管理员）
+功能描述：改变文件或目录的所有者
+语法	chown  [用户] [文件或目录]
+$ chown  shenchao  fengjie      改变文件fengjie的所有者为chenchao
+
+权限管理命令：chgrp
+命令名称：chgrp	英文名称：change file group ownership
+命令所在路径：/bin/chgrp
+执行权限：只有root（管理员）
+功能描述：改变文件或目录的所属组
+语法	chgrp  [用户] [文件或目录]
+$ chgrp  lampbrother  fengjie      改变文件fengjie的所属组为lampbrother
+
+权限管理命令：umask
+命令名称：umask	英文名称：the user file-creation mask
+命令所在路径：shell 内置命令
+执行权限：所有用户
+功能描述：显示、设置文件的缺省权限
+语法	umask[-S]
+	-S  以rwx形式显示系那件文件缺省权限
+$ umask -S
+$ umask   --->0022   0:特殊权限；022：u\g\o=--- -w- -w-(其实这是一个逻辑与）
+比如	777  rwx rwx rwx
+	022  --- -w- -w-
+             ----------------------
+	755   rwx r-x r-x     目录
+	         rw- r-- r--     文件
+$ touch   file.txt
+$ umask 077   ----->-rw- --- ---
+
+$mkdir menu
+$ umask o77 ------>drwx --- ---
+
+
+
+文件搜索命令：find     尽量不要用搜索命令（太占用资源了）,搜索范围越小越好
+命名名称：find	
+命令所在路径：/bin/find
+执行权限：所有用户
+语法：find [搜索范围][匹配条件]
+功能描述：文件搜索
+	-name （区分大小写） 	-iname（不区分大小写）
+	-size（根据文件大小查找）	+n大于，-n小于  n等于
+	-user（根据所有者来查找）	-group（根据所属组查找）
+	-amin（访问时间acces）	-cmin（文件属性 change， 即ls -l可以看到的信息）	-mmin（文件内容 modify）
+	-a（两个条件同时满足）	-o（两个条件满足任意一个即可）
+	-type （根据文件类型查找  f 文件  d目录   l软链接文件）
+	-inum（根据i节点查找）
+	-exec/-ok 命令 {} \; 对搜索结果执行操作   比如-exec/-ok rm {} \;
+$find /etc -name init   在目录/etc中查找文件init
+$find /etc -name *init*  在目录/etc中查找具有字母init的文件     比如inita  initabc   sysinit也会被搜索出来   这是一种模糊搜索
+$find /etc -name init*    查找以init开头的文件
+$find /etc -name init??? 查找以init开头，后面有三个字符的文件，一个？占一个字符
+$find /etc -name init*   -a -type d
+
+$find / -size +204800  在根目录下查找大于100MB的文件    1数据块  512byte  0.5k   文件存储单位：数据块，而不是字节
+$find /home -user shenchao
+$find /etc -cmin -5      在/etc内查找5分钟内被修改过属性的文件和目录    如果是+5就是超过5分钟
+
+$find /etc -size +163840 -a -size -204800  在/etc下查找大于80MB小于100MB的文件
+$find /etc -name inittab -exec ls -l {} \;    在/etc下查找inittab文件并显示其详细信息
+  
+文件搜索命令：locate
+命令名称：locate
+命令所在路径：/usr/bin/locate
+执行权限：所有用户
+功能描述：在文件资料库中查找文件   直接在/var/lin/locate中寻找，极快  
+语法	locate 文件名
+	-i (不区分大小写查询）
+$ locate inittab
+
+$touch /root/trespass
+$updatedb    跟新locate资料库
+$locate trepass  ---->/root/trespass         /tmp/目录下面的文件不可以！，不会被收录到locate
+
+文件搜索命令：whereis
+命令名称：whereis
+命令所在路径：/usr/bin/whereis
+执行权限：所有用户
+功能描述：搜索命令所在目录及帮助文档路径
+语法	whereis [命令名称]
+$whereis useradd   ----->useradd:/usr/sbin/useradd  /usr/share/man/man8/useradd.8.gz
+  
+文件搜索命令：which 
+命令名称：which
+命令所在路径：/usr/bin/which
+执行权限：所有用户
+功能描述：搜索命令所在目录及别名信息
+语法	which 命令
+$which ls
+$which rm  ----->alias rm='rm -i'     /bin/rm    alias(别名）
+
+文件搜索命令：grep
+命令名称：grep
+命令所在路径：/bin/grep
+执行权限：所有用户
+功能描述：在文件中搜寻字串匹配的行并输出
+语法	grep -iv[指定字串][文件]
+	-i不区分大小写
+	-v排除指定字串
+$grep mysql  /root/install.log
+$grep multiuser  /etc/inittab  ----->$  3 - Full multiuser mode  (在指定文件中搜索某些内容）
+$grep -v # /etc/inittab   ---------->去掉注释行
+$grep -v ^# /etc/inittab ----------->去掉注释：'#'后面的内容   即'^'代表'#'前面的内容，不删除
+
+帮助命令：man
+命令名称：man    英文原意：manual
+命令所在路径：/usr/bin/man
+执行权限：所有用户
+功能描述：获得帮助信息，可以查看命令和配置文件帮助
+语法	man [命令或配置文件]
+$ man ls    查看ls命令的帮助信息	 （浏览的时候跟more很像）
+$ man services 查看配置文件services的帮助信息    
+$ man 5 passwd 查看配置文件命令  (5：配置文件的帮助；1：指令的帮助)
+
+
+whatis
+$whatis 命令  
+$whatis ls   查看命令简短信息
+
+apropos
+$apropos 配置文件
+$apropos inittab   查看文件简短信息
+
+--help
+命令  --help
+$touch --help   查看命令的主要选项
+
+info  和man差不多
+
+帮助命令：help
+命令名称：help           
+命令所在路径：shell 内置命令       shell  就是一个命令解释器
+执行权限：所有用户
+功能描述：获得shell 内置命令的帮助信息
+语法	help 命令
+$help umask	----->查看umask命令的帮助信息
+
+第四课：
+用户管理命令：useradd
+命令名称：useradd
+命令所在路径：/usr/sbin/useradd
+执行权限：root
+语法：useradd 用户名
+功能描述：添加新用户
+$useradd zxx
+
+用户管理命令：passwd
+命令名称：passwd
+命令所在路径：/usr/sbin/passwd
+执行权限：root可以修改任何人密码；普通用户只能修改自己的密码
+语法：passwd 用户名
+功能描述：设置用户密码
+$passwd zxx
+
+用户管理命令：who
+命令名称：who
+命令所在路径：/usr/sbin/who
+执行权限：所有用户
+语法：who
+功能描述：查看登录用户信息
+$ who           tty本地登录   pts远程登陆
+
+用户管理命令：w
+命令名称：w
+命令所在路径：/usr/sbin/w
+执行权限：所有用户
+语法：w
+功能描述：查看登录用户详细信息
+$w
+
+压缩解压命令：gzip
+命令名称：gzip
+命令所在路径：/bin/gzip
+执行权限：所有用户
+语法：gzip[文件]
+功能描述：压缩文件
+压缩后文件格式：.gz      
+注：
+1、压缩后不保留源文件，只剩下压缩文件
+2、gzip不能压缩目录
+
+压缩解压命令：gunzip   也可以是gzip  -d
+命令名称：gunzip       英文原意：GNUunzip
+命令所在路径：/bin/gunzip
+执行权限：所有用户
+语法：	gunzip[压缩文件]
+功能描述：解压缩.gz的压缩文件
+$gunzip boduo.gz
+$gzip  -d  boduo.gz
+
+压缩解压命令：tar
+命令名称：tar（打包）
+命令所在路径：/bin/tar
+执行权限：所有用户
+语法：	tar 选项 [-zcf] [压缩后文件名] [目录]
+	-c 打包
+	-v 显示详细信息
+	-f 指定文件名
+	-z 打包同时压缩
+功能描述：打包目录
+压缩后文件格式：.tar.gz
+$tar  -cvf  Japan.tar  Japan      $gzip  Japan.tar
+$ tar -zcf Japan.tar.gz  Japan     将目录Japan 打包并压缩为tar.gz文件
+tar命令解压缩语法：
+	-x 解包
+	-v 显示详细信息
+	-f 指定解压缩文件
+	-z 解压缩
+$tar  -zxvf  Japan.tar.gz
+
+压缩解压命令：zip
+命令名称：zip
+命令所在路径：/usr/bin/zip
+执行权限：所有用户  
+语法: 	zip 选项 [-r] [压缩后文件名][文件或目录]
+	-r  压缩目录
+功能描述：压缩文件或目录
+压缩后文件格式：.zip
+$ zip boduo.zip boduo   压缩文件
+$zip -r Japan.zip  Japan    压缩目录
+
+压缩解压命令：unzip
+命令名称：unzip
+命令所在路径：/usr/bin/unzip
+执行权限：所有用户  
+语法: 	unzip [压缩文件]
+功能描述：压缩.zip的压缩文件
+$ unzip  test.zip 
+
+压缩解压命令：bzip2
+命令名称：：bzip2
+命令所在路径：/usr/bin/：bzip2
+执行权限：所有用户  
+语法: 	bzip2 选项 [-k] [文件]
+	-k  产生压缩文件后保留原文件
+功能描述：压缩文件
+压缩后文件格式：.bz2
+$ bzip2 -k boduo   压缩文件
+$ tar -cjf Japan.tar.bz2  Japan 
+
+压缩解压命令：bunzip2
+命令名称：bunzip2
+命令所在路径：/usr/bin/bunzip2
+执行权限：所有用户  
+语法: 	bunzip2 选项 [-k] [压缩文件]
+	-k  解压缩后保留原文件
+功能描述：解压缩
+$ bunzip2  -k  boduo.bz2
+$ bar  -xjf  Japan.tar.bz2
+$ unzip  test.zip 
+
+网络命令：write
+指令名称：write
+指令所在路径：/usr/bin/write
+执行权限：所有用户
+语法：write [用户名]    (一定是在线用户）
+功能描述：给用户发信息，以Ctrl+D保存结束
+$ write linzhiling
+注：删除信息不能只按删除键，一定要按Ctrl+删除键。否则只有^H
+
+网络命令：wall
+指令名称：wall	英文原意：write all
+指令所在路径：/usr/bin/wall
+执行权限：所有用户
+语法：	wall [message]    
+功能描述：发广播信息
+$ wall ShenChao is a honest man!
+
+网络命令：ping
+指令名称：ping	
+指令所在路径：/bin/ping
+执行权限：所有用户
+语法：	ping  选项  IP地址
+	-c 指定发从次数
+功能描述：测试网络连通性
+$ping -c 3  192.168.1.156
+
+网络命令：ifconfig
+指令名称：ifconfig	英文原意：interface configure	
+指令所在路径：/sbin/ifconfig
+执行权限：root
+语法：	ifconfig  网卡名称  IP地址
+功能描述：查看和设置网卡信息
+# ifconfig eth0 192.168.8.250
+
+网络命令：mail
+指令名称：mail	
+指令所在路径：/bin/mail
+执行权限：所有用户
+语法：	mail  [用户名]
+功能描述：查看发送电子邮件
+$ mail root	发送邮件
+$ mail		接收邮件  ---->N 1(序列号） ZhangXuexin     Thur Oct 14：20：45      19/615  "test"
+& 1(序列号）
+& h  查看邮件列表
+& d 1(序列号）
+& q退出
+
+网络命令：last
+指令名称：last	
+指令所在路径：/usr/bin/last
+执行权限：所有用户
+语法：	last	
+功能描述：列出目前与过去登入系统的用户信息
+$ last
+
+网络命令：lastlog
+指令名称：lastlog	
+指令所在路径：/usr/bin/lastlog
+执行权限：所有用户
+语法：	lastlog
+功能描述：列出所有用户和检查某特定用户上次登录的时间
+#lastlog
+#lastlog -u 502（用户id）   只看id为502的登录信息
+
+网络命令：traceroute
+指令名称：traceroute	
+指令所在路径：/bin/traceroute
+执行权限：所有用户
+语法：	traceroute
+功能描述：显示数据包到主机间的路径
+$ traceroute  www.sina.com.cn
+
+网络命令：netstat    查询网络状态
+指令命令：netstat
+指令所在路径：/bin/netstat
+执行权限：所有用户
+语法：	netstat [选项]
+功能描述：显示网络相关信息
+	-t	TCP协议
+	-u	UDP协议
+	-l	监听
+	-r	路由
+	-n	显示IP地址和端口号
+	-a	all
+$netstat -tlun	查看本机监听的端口
+$netstat -an	查看本机所有的网络连接    LISTEN   ESTABLISHED
+$netstat -rn	查看本机路由表
+
+网络命令：setup    (red hat 系列专有）
+指令命令：setup
+指令所在路径：/usr/bin/setup
+执行权限：所有用户
+语法：	setup
+功能描述：配置网络
+$setup
+
+挂载命令：mount      (有点意思，好好学学）
+命令名称：mount
+命令位置：/bin/mount
+执行权限：所有用户
+命令语法：mount [-t 文件系统] 设备文件名 挂载点
+$ mount  -t  iso9660  /dev/sr0  /mnt/cdrom    （相当于一个软链接）
+$ mount  /dev/sr0  /mnt/cdrom   （也可以）
+
+umount  /dev/sr0    退出挂载点 
+
+关机重启命令：shutdown  （可以正确保存数据再关机和重启，更安全）
+# shutdown [选项] 时间
+	-c	取消前一个关机命令
+	-h	关机
+	-r	重启
+#shutdown -h now
+#shutdown -h 20:30  晚上八点半关机
+#shutdown -r now
+#shutdown -c
+
+关机命令：halt
+关机命令：poweroff（直接断电，别随便用）
+关机命令：init 0
+
+重启命令：reboot
+重启命令：init 6
+
+系统运行级别：
+0	关机
+1	单用户  （类似Windows安全模式，启动最小最核心服务，一般用于进行修复）single user root
+2	不完全多用户，不含NFS服务 （不含NFS服务的命令行）  NFS（Network File System，网络文件系统）没必要非要用，不是很安全
+3	完全多用户  （完全命令行）
+4	未分配
+5	图形界面
+6	重启
+$cat /etc/inittab  #修改系统默认运行级别
+id:3:initdefault：
+initdefualt: 0or6  这人就不用开机了。。。。
+ 
+$ runlevel	      #查询系统运行级别  -------->N 3....又比如5 3
+
+退出登录命令：logout  （很重要！操作完之后必须logout！！）
+
+
+第五课：vim编辑器
+vim编辑器是一个功能强大的全屏幕文本编辑器
+vim 没有菜单，只有指令
+Vim常用操作：
+vi filename  ：进入命令模式
+插入命令 ：i ; a ; o  ---->insert
+回到命令模式：esc
+：编辑
+
