@@ -199,3 +199,43 @@ enabled=1
 #把enabled=0 改为enabled=1，让这个yum源配置文件生效
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
 
+源码包管理
+源码包与RPM包的区别
+区别：1、安装之前的区别：概念上的区别；   2、安装之后的区别：安装位置不同
+RPM包安装位置：
+是安装在默认位置
+RPM默认安装位置：
+/etc/        配置文件安装目录   
+/usr/bin/    可执行的命令安装目录
+/usr/lib/    c程序所使用的函数库保存位置
+/usr/share/doc/  基本的软件使用手册保存位置
+/usr/share/doc/  帮助文件保存位置
+
+源码包安装位置
+安装在指定位置当中，一般是 /usr/local/软件名/
+
+安装位置不同带来的影响qi
+RPM包安装的服务可以使用系统服务管理命令（service）来管理，例如RPM包安装的apache的启动方法是：
+/etc/rc.d/init.d/httpd start
+service httpd start   (因为service根据RPM默认安装路径使用，所以源码码安装不能用这个）
+而源码包安装的服务则不能被服务管理命令管理，因为没有安装到默认路径中，所以只能用绝对路径服务的管理，如：
+/usr/local/apache2/bin/apachact1 start
+
+源码包的安装过程
+[image2]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
