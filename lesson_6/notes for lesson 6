@@ -1,3 +1,152 @@
 软件包分类：
-源码包：脚本安装包
-二进制包（RPM包、系统默认包）
+源码包：脚本安装包（源码包之上的再开发install.sh可以自动安装，比一般的源码包多一个安装界面，给菜鸟用的）
+二进制包（RPM包、系统默认包）（是源代码编译后的010101格式的包，也就是RPM包）（可以省略编译过程，安装更快）
+
+源码包的优点：
+1、开源，如果有足够的能力，可以修改源代码
+2、可以自由选择所需的功能
+3、软件是编译安装，所以更加适合自己的系统，更加稳定也效率更高
+4、卸载方便（Linux其实没有卸载一说，直接找到安装目录删掉安装位置
+
+源码包的缺点：
+1、安装过程步骤较多，尤其是安装较大的软件集合时（如（LAMP环境搭建），容易出现拼写错误。
+2、编译过程时间较长，安装比二进制安装时间长
+3、因为是编译安装，安装过程中一旦报错新手很难解决
+
+RPM包：
+二进制包的优点：
+1、包管理系统简单，中通过几个命令就可以实现包的安装、升级、查询和卸载
+2、安装速度比源代码包安装快的多
+
+二进制包的缺点：
+1、经过编译，不再可以看到源代码
+2、功能选择不如源代码包灵活
+3、依赖性    package依赖性
+
+RPM包管理-rpm命令管理
+RPM包命名规则
+httpd-2.2.15-15.el6.centos.1.i686.rpm
+httpd       软件包名
+2.2.15      软件版本
+15          软件发布次数
+el6.centos  适合的Linux平台 el6或者centos linux平台    noarch  意思是任何一个平台都可以安装
+i686        合适的硬件平台  适合686微机平台基本都是用    如果是x64，就只能再64位机安装
+rpm         rpm包扩展名     写给管理员看的
+包全名：操作的包是没有安装的软件包时，使用包全名。而且要注意路径  （安装与升级）
+包命：操作已经安装的软件包时，使用包名。是搜索/var/lib/rpm/中的数据库
+
+RPM包依赖性：
+树形依赖：a--->b--->c    可能会依赖20~30个wrapper
+环形依赖：a--->b--->c--->a    这种时候就要把a,b,c三个package同时安装
+模块依赖：模块依赖查询网站--->www.rpmfind.net  通过这个网站进行查询
+以'.so.2(num)'结尾的都是库依赖包
+
+RPM安装
+rpm -ivh 包全名       （-ivh经常同时应用）
+-i(install)           安装
+-v(verbose)           显示详细信息
+-h(hash)              显示进度
+--nodeps              不检测依赖性   （一般不用）
+RPM包升级
+rpm -Uvh 包全名
+选项：
+  -U（upgrade）       升级
+卸载:
+rpm -e 包名
+选项：
+  -e(erase)          卸载
+  --nodeps           不检测依赖性
+
+创建挂载点：
+mkdir  /mnt/cdrom
+mount /dev/sr0  /mut/cdrom
+cd /mnt/cdrom/
+...     ....      .....
+
+查询是否安装：
+[root@localhost~]#rpm -q 包名  #查询包是否安装
+选项：
+    -q     查询（query）
+[root@localhost~]#rpm -qa      #查询所有已安装的RPM包
+选项：
+    -a     所有（all)
+[root@localhost~]#rpm -qa  |  prep httpd  #查询所有与httpd包所有相关的包
+
+查询软件包详细信息：
+[root@localhost~]#rpm -qi 包名
+    -i     查询软件信息（information）
+[root@localhost~]#rpm -qip 包全名
+    -p     查询未安装包信息（package）
+    
+查询包中文件安装位置
+[root@localhost~]#rpm -ql 包名
+选项：
+    -l     列表（list)
+    -p     查询未安装包信息（package）
+
+查询系统文件属于哪个RPM包
+[root@localhost~]#rpm -qf 系统文件名
+选项：
+     -f 查询系统文件属于哪个软件包（file）
+
+查询软件包的依赖性
+[root@localhost~]#rpm -qR 包名     
+选项：
+   -R  查询软件包的依赖性（requires）
+   -p  查询未安装包信息（package）
+     
+RPM包校验
+[root@localhost~]#rpm -V  已安装的包名
+选项：
+    -V  校验指定RPM包中的文件（verify)
+验证内容中的8个信息的具体内容下：
+S   文件大小是否改变
+M   文件的类型或文件的权限（rwx）是否被改变
+5   文件MD5校验和是否改变（可以看成文件内容是否改变）
+D   设备中，从代码是否改变
+L   文件路径是否改变
+U   文件的属主（所有者）是否改变
+G   文件的属组是否改变
+T   文件的修改时间是否改变
+文件类型
+c     配置文件（config file）
+d     普通文件（documention）
+g     “鬼”文件（ghost file），很少见，就是该文件不应该被这个RPM包包含
+l     授权文件（license file）
+r     描述文件（read me）
+[root@localhost~]#rpm -V httpd
+S.5....T.    c /etc/httpd/conf/httpd.conf
+
+RPM包中文件提取
+[root@localhost~]#rpm2cpio 包全名 |\         # rpm to cpio
+cpio -idv .文件绝对路径
+rpm2cpio      #将rpm包转换为cpio格式命令
+cpio          #是一个标准工具，它用于创建软件档案文件和从档案文件中提取文件
+[root@localhost~]#cpio 选项<[文件|设备]
+选项：
+   -i：copy-in 模式，还原
+   -d: 还原时自动新建目录
+   -v：显示还原过程
+
+[root@localhost~]#rpm -qf /bin/ls
+#查询ls命令属于哪个包
+[root@localhost~]#mv  /bin/ls  /tmp/
+#造成ls命令错误删除假象
+[root@localhost~]#rpm2cpio  /mnt/cdrom/Package/coreutils-8.4-19.el6.i686.rpm | cpio -idv .bin/ls
+#提取RPM包中ls命令到当前目录的/bin/ls 下
+[root@localhost~]#cp /root/bin/ls  /bin/
+#把ls命令复制回/bin/目录，修复文件丢失
+     
+     
+     
+     RPM包管理-yum在线管理
+IP地址配置和网络yum源
+1、IP地址配置
+[root@localhost~]#setup     #使用setup工具
+[root@localhost~]# vi /etcsysconfig/network-scripts/ifcfg-eth0
+把ONBOOT='no'改为ONBOOT='yes' #启动网卡
+[root@localhost~]#service network restart  #重启网络服务
+
+
+
+
